@@ -12,19 +12,17 @@ export default {
       dragging: false,
       offsetX: 0,
       offsetY: 0,
-      canvasHeight: 0,
 
       // 二维码图片大小
       layerWidth: "100",
       layerHeight: "100",
+      qrcodeSize: [0, 0, 0, 0],// 原始宽度 高度 容器宽度高度
       finalPosition: { x: 0, y: 0 },
 
-      // 原始背景图片容器宽度高度
-      originalBackgroundWidth: 0,
-      originalBackgroundHeight: 0,
-      // 当前背景图片容器宽度高度
-      displayedBackgroundWidth: 0,
-      displayedBackgroundHeight: 0,
+      scaleX: 0,
+      scaleY: 0,
+
+
     }
   },
   methods: {
@@ -37,40 +35,48 @@ export default {
       if (this.dragging) {
         this.layerX = event.clientX - this.offsetX
         this.layerY = event.clientY - this.offsetY
+        this.updatePosition();
       }
+    },
+
+    // 计算坐标
+    updatePosition() {
+      this.finalPosition.x = (this.layerX + (this.qrcodeSize[0] - this.qrcodeSize[2]) / 2) * this.scaleX
+      this.finalPosition.y = (this.layerY + (this.qrcodeSize[1] - this.qrcodeSize[3]) / 2) * this.scaleY
     },
     stopDragging() {
       this.dragging = false
-      // 计算缩放比例
-      const scaleX
-        = this.originalBackgroundWidth / this.displayedBackgroundWidth
-      const scaleY
-        = this.originalBackgroundHeight / this.displayedBackgroundHeight
-
-      console.log('当前位置', this.layerX * scaleX, this.layerY * scaleY)
-      console.log('---------')
+      this.updatePosition();
     },
+    // 背景图片加载成功
     adjustCanvasHeight(event) {
-      // 背景图片原始尺寸
-      this.originalBackgroundWidth = event.target.naturalWidth
-      this.originalBackgroundHeight = event.target.naturalHeight
-      // 获取容器尺寸
-      this.displayedBackgroundWidth = event.target.offsetWidth
-      this.displayedBackgroundHeight = event.target.offsetHeight
+
+      // 计算缩放比例 背景图片原始尺寸/当前尺寸
+      this.scaleX
+        = this.$refs.backgroundImageRef.naturalWidth / this.$refs.backgroundImageRef.offsetWidth
+      this.scaleY
+        = this.$refs.backgroundImageRef.naturalHeight / this.$refs.backgroundImageRef.offsetHeight
 
 
-      const backgroundImage = new Image()
-      backgroundImage.src = this.backgroundImage
-      backgroundImage.onload = () => {
-        this.canvasHeight = 'auto'
-      }
+
+      // 获取缩放比例
+      this.scale = this.$refs.backgroundImageRef.offsetWidth / this.$refs.backgroundImageRef.naturalWidth
+
+
+      this.qrcodeSize[0] = this.$refs.layer.naturalWidth
+      this.qrcodeSize[1] = this.$refs.layer.naturalHeight
+      this.qrcodeSize[2] = this.qrcodeSize[0] * this.scale
+      this.qrcodeSize[3] = this.qrcodeSize[1] * this.scale
+
+
     },
   },
+
 }
 </script>
 
 <template>
-  <div style="width: 400px; min-height: 120px">
+  <div style="width: 400px; min-height: 120px;margin: 0 auto;">
     <div class="canvas-container">
       <div class="canvas" :style="{ height: `auto` }">
         <img ref="backgroundImageRef" class="background-image" :src="backgroundImage" @load="adjustCanvasHeight">
@@ -78,12 +84,14 @@ export default {
           transform: `scale(${scale})`,
           left: `${layerX}px`,
           top: `${layerY}px`,
-        }" :width="`${layerWidth}px`" :height="`${layerHeight}px`" @mousedown="startDragging" @mousemove="drag"
-          @mouseup="stopDragging">
+        }" @mousedown="startDragging" @mousemove="drag" @mouseup="stopDragging">
       </div>
     </div>
     <div class="output">
       {{ finalPosition.x }}, {{ finalPosition.y }}
+    </div>
+    <div>
+      二维码尺寸
     </div>
     <t-input v-model="layerWidth" />
 
