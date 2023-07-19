@@ -8,6 +8,7 @@
     "lint:fix": "eslint \"**/*.{vue,ts,js}\" --fix"
   },
   "dependencies": {
+    "@types/node": "^20.4.2",
     "@vueuse/core": "^9.13.0",
     "axios": "^1.4.0",
     "core-js": "^3.29.1",
@@ -15,6 +16,7 @@
     "nprogress": "^0.2.0",
     "pinia": "^2.1.4",
     "tdesign-vue": "^1.4.8-naruto",
+    "vite-plugin-vue2-svg": "^0.4.0",
     "vue": "^2.7.14",
     "vue-router": "^3.6.5",
     "vuedraggable": "^4.0.1"

@@ -1,26 +1,31 @@
+import router from '@/router';
 import { PiniaVuePlugin, createPinia } from 'pinia';
-import Vue from 'vue';
-
-// import ElementUI from 'element-ui'
-// import 'element-ui/lib/theme-chalk/index.css'
-// import locale from 'element-ui/lib/locale/lang/zh-CN.js' // lang i18n
-
 import TDesign from 'tdesign-vue';
-// 引入组件库的少量全局样式变量
 import 'tdesign-vue/es/style/index.css';
+import 'virtual:windi.css';
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
 import App from '@/App.vue';
 
-import 'virtual:windi.css';
-
-import router from '@/router';
 
 Vue.config.productionTip = false
 Vue.config.devtools = true
 
 Vue.use(PiniaVuePlugin)
-// Vue.use(ElementUI, { locale })
 Vue.use(TDesign);
+
+// 增加push方法
+const originPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originPush.call(this, location).catch((err) => err);
+};
+
+// 增加replace方法
+const originReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(location) {
+  return originReplace.call(this, location).catch((err) => err);
+};
 
 
 /* eslint-disable no-new */

@@ -76,26 +76,15 @@ export default {
 </script>
 
 <template>
-  <div style="width: 400px; min-height: 120px;margin: 0 auto;">
-    <div class="canvas-container">
-      <div class="canvas" :style="{ height: `auto` }">
-        <img ref="backgroundImageRef" class="background-image" :src="backgroundImage" @load="adjustCanvasHeight">
-        <img ref="layer" class="layer" :src="layerImage" :style="{
-          transform: `scale(${scale})`,
-          left: `${layerX}px`,
-          top: `${layerY}px`,
-        }" @mousedown="startDragging" @mousemove="drag" @mouseup="stopDragging">
-      </div>
+  <div class="canvas-container">
+    <div class="canvas" :style="{ height: `auto` }">
+      <img ref="backgroundImageRef" class="background-image" :src="backgroundImage" @load="adjustCanvasHeight">
+      <img ref="layer" class="layer" :src="layerImage" :style="{
+        transform: `scale(${scale})`,
+        left: `${layerX}px`,
+        top: `${layerY}px`,
+      }" @mousedown="startDragging" @mousemove="drag" @mouseup="stopDragging">
     </div>
-    <div class="output">
-      {{ finalPosition.x }}, {{ finalPosition.y }}
-    </div>
-    <div>
-      二维码尺寸
-    </div>
-    <t-input v-model="layerWidth" />
-
-    <t-input v-model="layerHeight" />
   </div>
 </template>
 
